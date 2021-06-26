@@ -4,10 +4,13 @@ import static data.Conexion.*;
 import domain.Persona;
 import java.sql.*;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class PersonaDAO {
 
     private static final String SQL_SELECT = "SELECT * FROM Empleado";
+    private static final String SQL_INSERT = "INSERT INTO Empleado (identificacion_empleado, nombre_empleado, cargo_empleado, salario, direccion_empleado, e_mail, telefono_empleado, area_empleado, identificacion_jefe, estado_empleado) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
     public List<Persona> seleccionar() {
         Connection conn = null;
@@ -38,14 +41,46 @@ public class PersonaDAO {
             ex.printStackTrace(System.out);
         } finally {
             try {
-                Conexion.close((Connection) rs);
-                Conexion.close((Connection) smtm);
-                Conexion.close(conn);
+                close(rs);
+                close(smtm);
+                close(conn);
             } catch (SQLException ex) {
                 ex.printStackTrace(System.out);
             }
         }
         return personas;
+    }
+
+    public int insert(Persona persona) {
+        Connection conn = null;
+        PreparedStatement smtm = null;
+        int registro = 0;
+        try {
+            conn = getConnection();
+            smtm = conn.prepareStatement(SQL_INSERT);
+            smtm.setString(1, persona.getIdEmpleado());
+            smtm.setString(2, persona.getNombre());
+            smtm.setString(3, persona.getCargo());
+            smtm.setString(4, persona.getSalario());
+            smtm.setString(5, persona.getDireccion());
+            smtm.setString(6, persona.getE_mail());
+            smtm.setString(7, persona.getTelefono());
+            smtm.setString(8, persona.getArea());
+            smtm.setString(9, persona.getIdJefe());
+            smtm.setString(10, persona.getEstado());
+            registro = smtm.executeUpdate();
+        } catch (SQLException ex) {
+            ex.printStackTrace(System.out);
+        } finally {
+            try {
+                close(smtm);
+                close(conn);
+            } catch (SQLException ex) {
+                ex.printStackTrace(System.out);
+            }
+        }
+        return registro;
+
     }
 
 }

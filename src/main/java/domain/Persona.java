@@ -32,7 +32,7 @@ public class Persona {
         this.estado = estado;
     }
 
-    public Persona(String nombre, String cargo, String salario, String direccion, String e_mail, String telefono, String area, String idJefe, String estado) {
+    public Persona(String idEmpleado, String nombre, String cargo, String salario, String direccion, String e_mail, String telefono, String area, String estado) {
         this.nombre = nombre;
         this.cargo = cargo;
         this.salario = salario;
