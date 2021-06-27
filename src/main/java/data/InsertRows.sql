@@ -43,6 +43,8 @@ INSERT INTO Empleado(identificacion_empleado, nombre_empleado, cargo_empleado, s
 INSERT INTO Empleado(identificacion_empleado, nombre_empleado, cargo_empleado, salario, direccion_empleado, e_mail, telefono_empleado, area_empleado, identificacion_jefe, estado_empleado) VALUES('1234567894','Medico 2', 'Medico','Calle 2 # 30-37','5000000','emp5@gmail.com','3008009005','1001','1234567897','1');
 INSERT INTO Empleado(identificacion_empleado, nombre_empleado, cargo_empleado, salario, direccion_empleado, e_mail, telefono_empleado, area_empleado, identificacion_jefe, estado_empleado) VALUES('1234567895','Medico 3', 'Medico','Calle 2 # 30-38','6000000','emp6@gmail.com','3008009006','1001','1234567898','1');
 
+INSERT INTO Usuario(usuario, id_usuario, password)VALUES('emp1@gmail.com', '1234567890', '11234567')
+
 INSERT INTO Medico (identificacion_medico, especialidad, numero_licencia, universidad) VALUES ('1234567893','Neurocirugia','100900301','Univalle');
 INSERT INTO Medico (identificacion_medico, especialidad, numero_licencia, universidad) VALUES ('1234567894','Pediatria','100900302','ICESI');
 INSERT INTO Medico (identificacion_medico, especialidad, numero_licencia, universidad) VALUES ('1234567895','ADN','100900303','Javeriana');

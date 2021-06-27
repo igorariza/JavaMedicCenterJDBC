@@ -64,6 +64,13 @@ CREATE TABLE Empleado(
 	estado_empleado			VARCHAR(30),
 	FOREIGN KEY (identificacion_jefe) REFERENCES Empleado(identificacion_empleado)
 );
+#Usuario(id_usuario, usuario, password)
+CREATE TABLE Usuario(
+	usuario				VARCHAR(30)	NOT NULL PRIMARY KEY,
+        id_usuario			VARCHAR(30)	NOT NULL,	
+	password			VARCHAR(200)	NOT NULL
+	
+);
 #Medico(identificacion_medico, especialidad, numero_licencia, universidad)
 CREATE TABLE Medico(
 	identificacion_medico			VARCHAR(30)	NOT NULL 	PRIMARY KEY,
