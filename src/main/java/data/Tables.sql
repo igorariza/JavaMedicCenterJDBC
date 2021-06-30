@@ -35,6 +35,21 @@ DROP TABLE IF EXISTS PacienteCama CASCADE;
 DROP TABLE IF EXISTS Campana_prevencion CASCADE;
 DROP TABLE IF EXISTS Participante_campana CASCADE;
 DROP TABLE IF EXISTS Formula_especifica CASCADE;
+#ROl
+CREATE TABLE Rol(
+        id_rol VARCHAR(2) NOT NULL PRIMARY KEY,
+        nombre VARCHAR(30) NOT NULL
+);
+
+#Usuarios (id_usuario, nombreapellido_usuario, username, psw, id_estado, id_rol)
+CREATE TABLE Usuarios(
+        id_usuario VARCHAR(30) NOT NULL PRIMARY KEY,
+        nombreapellido_usuario VARCHAR(30) NOT NULL,
+        username    VARCHAR(30) NOT NULL,
+        psw         VARCHAR(40) NOT NULL,
+        id_estado   VARCHAR(1) NOT NULL,
+        id_rol      VARCHAR(2) NOT NULL
+);
 #Area(codigo_area, nombre_area, descripcion_area)
 CREATE TABLE Area(
 	codigo_area			VARCHAR(30)	NOT NULL 	PRIMARY KEY,

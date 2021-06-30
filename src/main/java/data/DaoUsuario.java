@@ -8,7 +8,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DaoUsuario implements IDAO<Usuario> {
+public class DaoUsuario implements IDAO<User> {
 
     private PreparedStatement insertar;
     private PreparedStatement eliminar;
@@ -29,7 +29,7 @@ public class DaoUsuario implements IDAO<Usuario> {
     }
 
     public void insertar(User usuario) throws SQLException {
-        String query = "INSERT INTO usuarios (id_usuario, nombreapellido_usuario, username, psw, id_estado, id_rol) VALUES (?, ?, ?, ?, ?, ?)";
+        String query = "INSERT INTO Usuarios (id_usuario, nombreapellido_usuario, username, psw, id_estado, id_rol) VALUES (?, ?, ?, ?, ?, ?)";
 
         if (insertar == null) {
             insertar = getConnection().prepareStatement(query);
@@ -45,7 +45,7 @@ public class DaoUsuario implements IDAO<Usuario> {
     }
 
     public void eliminar(String id) throws SQLException {
-        String query = "DELETE FROM usuarios WHERE id_usuario = ?";
+        String query = "DELETE FROM Usuarios WHERE id_usuario = ?";
 
         if (eliminar == null) {
             eliminar = getConnection().prepareStatement(query);
@@ -55,40 +55,40 @@ public class DaoUsuario implements IDAO<Usuario> {
         eliminar.executeUpdate();
     }
 
-//    public List<User> listar() throws SQLException {
-//        String query = "SELECT usuarios.id_usuario, usuarios.nombreapellido_usuario, usuarios.username, usuarios.psw, usuarios.id_rol, roles.nombre_rol, estados.nombre_estado \n"
-//                + "FROM usuarios, roles, estados \n"
-//                + "WHERE usuarios.id_estado=estados.id_estado AND roles.id_rol=usuarios.id_rol";
-//
-//        if (listar == null) {
-//            listar = getConnection().prepareStatement(query);
-//        }
-//        ResultSet set = listar.executeQuery();
-//        ArrayList<User> result = new ArrayList<>();
-//        while (set.next()) {
-//            result.add(cargar(set));
-//        }
-//
-//        return result;
-//    }
+    public List<User> listar() throws SQLException {
+        String query = "SELECT Usuarios.id_usuario, Usuarios.nombreapellido_usuario, Usuarios.username, Usuarios.id_rol, Rol.nombre, estados.nombre_estado \n"
+                + "FROM Usuarios, Rol, estados \n"
+                + "WHERE Usuarios.id_estado=estados.id_estado AND Rol.id_rol=Usuarios.id_rol";
 
-//    public User buscar(String id) throws SQLException {
-//        String query = "SELECT usuarios.id_usuario, usuarios.nombreapellido_usuario, usuarios.username, usuarios.psw, usuarios.id_rol, roles.nombre_rol, estados.nombre_estado \n"
-//                + "FROM usuarios, roles, estados \n"
-//                + "WHERE usuarios.id_estado=estados.id_estado AND roles.id_rol=usuarios.id_rol AND usuarios.id_estado=1  AND usuarios.username = ?";
-//
-//        if (buscar == null) {
-//            buscar = getConnection().prepareStatement(query);
-//        }
-//
-//        buscar.setString(1, id);
-//        ResultSet set = buscar.executeQuery();
-//
-//        return set != null && set.next() ? cargar(set) : null;
-//    }
+        if (listar == null) {
+            listar = getConnection().prepareStatement(query);
+        }
+        ResultSet set = listar.executeQuery();
+        ArrayList<User> result = new ArrayList<>();
+        while (set.next()) {
+            result.add(cargar(set));
+        }
+
+        return result;
+    }
+
+    public User buscar(String id) throws SQLException {
+        String query = "SELECT usuarios.id_usuario, usuarios.nombreapellido_usuario, usuarios.username, usuarios.psw, usuarios.id_rol, roles.nombre_rol, estados.nombre_estado \n"
+                + "FROM usuarios, roles, estados \n"
+                + "WHERE usuarios.id_estado=estados.id_estado AND roles.id_rol=usuarios.id_rol AND usuarios.id_estado=1  AND usuarios.username = ?";
+
+        if (buscar == null) {
+            buscar = getConnection().prepareStatement(query);
+        }
+
+        buscar.setString(1, id);
+        ResultSet set = buscar.executeQuery();
+
+        return set != null && set.next() ? cargar(set) : null;
+    }
 
     public void actualizar(User usuario) throws SQLException {
-        String query = "UPDATE usuarios SET nombreapellido_usuario=?, username=?, psw=?, id_estado=?, id_rol=?"
+        String query = "UPDATE Usuarios SET nombreapellido_usuario=?, username=?, psw=?, id_estado=?, id_rol=?"
                 + "WHERE id_usuario = ?";
 
         if (actualizar == null) {
@@ -117,25 +117,4 @@ public class DaoUsuario implements IDAO<Usuario> {
         usuario.setEstado(set.getString("nombre_estado"));
         return usuario;
     }
-
-    @Override
-    public void insertar(Usuario entidad) throws SQLException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public void actualizar(Usuario entidad) throws SQLException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public List<Usuario> listar() throws SQLException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
-    @Override
-    public Usuario buscar(String id) throws SQLException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
 }
