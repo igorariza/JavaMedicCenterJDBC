@@ -2,6 +2,7 @@ package data;
 
 import static data.Conexion.*;
 import domain.*;
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -10,11 +11,14 @@ import java.util.List;
 
 public class Participante_CampanaDAO implements IDAO<Participante_Campana> {//clase que retorna o bien un vector o una matriz de 
 
-    private PreparedStatement insertar;
-    private PreparedStatement eliminar;
-    private PreparedStatement actualizar;
-    private PreparedStatement buscar;
-    private PreparedStatement listar;
+    //para las consultas SQL............
+    private PreparedStatement insertar = null;
+    private PreparedStatement eliminar = null;
+    private PreparedStatement actualizar = null;
+    private PreparedStatement buscar = null;
+    private PreparedStatement listar = null;
+    private Connection conn = null;
+    private Connection conexionTransaccional;
 
     private static Participante_CampanaDAO instacia;
 
@@ -33,8 +37,9 @@ public class Participante_CampanaDAO implements IDAO<Participante_Campana> {//cl
 
         String query = "INSERT INTO Participante_Campana (codigo_de_campana, identificacion_paciente) VALUES (?, ?)";
 
+        conn = this.conexionTransaccional != null ? this.conexionTransaccional : getConnection();
         if (insertar == null) {
-            insertar = getConnection().prepareStatement(query);
+            insertar = conn.prepareStatement(query);
         }
 
         insertar.setString(1, entidad.getCodigo_de_campana());
@@ -47,8 +52,9 @@ public class Participante_CampanaDAO implements IDAO<Participante_Campana> {//cl
     public void eliminar(String id) throws SQLException {
         String query = "DELETE FROM Participante_Campana WHERE codigo_de_campana = ? ";
 
+        conn = this.conexionTransaccional != null ? this.conexionTransaccional : getConnection();
         if (eliminar == null) {
-            eliminar = getConnection().prepareStatement(query);
+            eliminar = conn.prepareStatement(query);
         }
 
         eliminar.setString(1, id);
@@ -70,8 +76,9 @@ public class Participante_CampanaDAO implements IDAO<Participante_Campana> {//cl
         String query = "SELECT * \n"
                 + "FROM Participante_Campana \n";
 
+        conn = this.conexionTransaccional != null ? this.conexionTransaccional : getConnection();
         if (listar == null) {
-            listar = getConnection().prepareStatement(query);
+            listar = conn.prepareStatement(query);
         }
         ResultSet set = listar.executeQuery();
         ArrayList<Participante_Campana> result = new ArrayList<>();
@@ -82,7 +89,6 @@ public class Participante_CampanaDAO implements IDAO<Participante_Campana> {//cl
         return result;
     }
 
-    
 //    public List<Participante_Campana> buscar(String id) throws SQLException {
 //
 //        String query = "SELECT DISTINCT   nombre_paciente, direccion_paciente, telefono_paciente\n"
@@ -102,7 +108,6 @@ public class Participante_CampanaDAO implements IDAO<Participante_Campana> {//cl
 //
 //        return result;
 //    }
-
     @Override
     public void actualizar(Participante_Campana entidad) throws SQLException {
 //Aqui no debe ser posible hacer actualizaciones
@@ -112,4 +117,5 @@ public class Participante_CampanaDAO implements IDAO<Participante_Campana> {//cl
     public Participante_Campana buscar(String id) throws SQLException {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
+
 }

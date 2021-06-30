@@ -2,6 +2,7 @@ package data;
 
 import static data.Conexion.*;
 import domain.*;
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -10,11 +11,14 @@ import java.util.List;
 
 public class Historia_clinicaDAO implements IDAO<Historia_clinica> {
 
-    private PreparedStatement insertar;
-    private PreparedStatement eliminar;
-    private PreparedStatement actualizar;
-    private PreparedStatement buscar;
-    private PreparedStatement listar;
+    //para las consultas SQL............
+    private PreparedStatement insertar = null;
+    private PreparedStatement eliminar = null;
+    private PreparedStatement actualizar = null;
+    private PreparedStatement buscar = null;
+    private PreparedStatement listar = null;
+    private Connection conn = null;
+    private Connection conexionTransaccional;
 
     private static Historia_clinicaDAO instacia;
 
@@ -30,8 +34,9 @@ public class Historia_clinicaDAO implements IDAO<Historia_clinica> {
         String query = "INSERT INTO Historia_clinica(numero_historia, fecha_apertura, identificacion_paciente) VALUES "
                 + "(?,?,?);";
 
+        conn = this.conexionTransaccional != null ? this.conexionTransaccional : getConnection();
         if (insertar == null) {
-            insertar = getConnection().prepareStatement(query);
+            insertar = conn.prepareStatement(query);
         }
 
         insertar.setString(1, entidad.getNumero_historia());
@@ -43,8 +48,9 @@ public class Historia_clinicaDAO implements IDAO<Historia_clinica> {
 
     public void eliminar(String id) throws SQLException {
         String query = "DELETE FROM Historia_clinica WHERE historia_serial = ? ;";
+        conn = this.conexionTransaccional != null ? this.conexionTransaccional : getConnection();
         if (eliminar == null) {
-            eliminar = getConnection().prepareStatement(query);
+            eliminar = conn.prepareStatement(query);
         }
 
         eliminar.setString(1, id);
@@ -72,8 +78,9 @@ public class Historia_clinicaDAO implements IDAO<Historia_clinica> {
                 + "        ON t1.historia_clinica_serial = t2.historia_serial_hce \n"
                 + "     ) AS tabla";
 
+        conn = this.conexionTransaccional != null ? this.conexionTransaccional : getConnection();
         if (listar == null) {
-            listar = getConnection().prepareStatement(query);
+            listar = conn.prepareStatement(query);
         }
         ResultSet set = listar.executeQuery();
         ArrayList<Historia_clinica> result = new ArrayList<>();
@@ -89,8 +96,9 @@ public class Historia_clinicaDAO implements IDAO<Historia_clinica> {
                 + "FROM Historia_clinica\n"
                 + "WHERE Historia_clinica.historia_serial= ? ;";
 
+        conn = this.conexionTransaccional != null ? this.conexionTransaccional : getConnection();
         if (buscar == null) {
-            buscar = getConnection().prepareStatement(query);
+            buscar = conn.prepareStatement(query);
         }
 
         buscar.setString(1, id);
@@ -104,8 +112,9 @@ public class Historia_clinicaDAO implements IDAO<Historia_clinica> {
         String query = "UPDATE Historia_clinica SET  numero_historia = ?, fecha_apertura = ?,"
                 + " identificacion_paciente = ? WHERE historia_serial= ? ;";
 
+        conn = this.conexionTransaccional != null ? this.conexionTransaccional : getConnection();
         if (actualizar == null) {
-            actualizar = getConnection().prepareStatement(query);
+            actualizar = conn.prepareStatement(query);
         }
 
         actualizar.setString(1, entidad.getNumero_historia());

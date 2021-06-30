@@ -2,6 +2,7 @@ package data;
 
 import static data.Conexion.*;
 import domain.*;
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -10,11 +11,14 @@ import java.util.List;
 
 public class DaoUsuario implements IDAO<User> {
 
-    private PreparedStatement insertar;
-    private PreparedStatement eliminar;
-    private PreparedStatement actualizar;
-    private PreparedStatement buscar;
-    private PreparedStatement listar;
+    //para las consultas SQL............
+    private PreparedStatement insertar = null;
+    private PreparedStatement eliminar = null;
+    private PreparedStatement actualizar = null;
+    private PreparedStatement buscar = null;
+    private PreparedStatement listar = null;
+    private Connection conn = null;
+    private Connection conexionTransaccional;
 
     private static DaoUsuario instacia;
 
@@ -31,8 +35,9 @@ public class DaoUsuario implements IDAO<User> {
     public void insertar(User usuario) throws SQLException {
         String query = "INSERT INTO Usuarios (id_usuario, nombreapellido_usuario, username, psw, id_estado, id_rol) VALUES (?, ?, ?, ?, ?, ?)";
 
+        conn = this.conexionTransaccional != null ? this.conexionTransaccional : getConnection();
         if (insertar == null) {
-            insertar = getConnection().prepareStatement(query);
+            insertar = conn.prepareStatement(query);
         }
 
         insertar.setString(1, usuario.getCodigo_usuario());
@@ -47,8 +52,9 @@ public class DaoUsuario implements IDAO<User> {
     public void eliminar(String id) throws SQLException {
         String query = "DELETE FROM Usuarios WHERE id_usuario = ?";
 
+        conn = this.conexionTransaccional != null ? this.conexionTransaccional : getConnection();
         if (eliminar == null) {
-            eliminar = getConnection().prepareStatement(query);
+            eliminar = conn.prepareStatement(query);
         }
 
         eliminar.setString(1, id);
@@ -60,8 +66,9 @@ public class DaoUsuario implements IDAO<User> {
                 + "FROM Usuarios, Rol, estados \n"
                 + "WHERE Usuarios.id_estado=estados.id_estado AND Rol.id_rol=Usuarios.id_rol";
 
+        conn = this.conexionTransaccional != null ? this.conexionTransaccional : getConnection();
         if (listar == null) {
-            listar = getConnection().prepareStatement(query);
+            listar = conn.prepareStatement(query);
         }
         ResultSet set = listar.executeQuery();
         ArrayList<User> result = new ArrayList<>();
@@ -77,8 +84,9 @@ public class DaoUsuario implements IDAO<User> {
                 + "FROM usuarios, roles, estados \n"
                 + "WHERE usuarios.id_estado=estados.id_estado AND roles.id_rol=usuarios.id_rol AND usuarios.id_estado=1  AND usuarios.username = ?";
 
+        conn = this.conexionTransaccional != null ? this.conexionTransaccional : getConnection();
         if (buscar == null) {
-            buscar = getConnection().prepareStatement(query);
+            buscar = conn.prepareStatement(query);
         }
 
         buscar.setString(1, id);
@@ -91,8 +99,9 @@ public class DaoUsuario implements IDAO<User> {
         String query = "UPDATE Usuarios SET nombreapellido_usuario=?, username=?, psw=?, id_estado=?, id_rol=?"
                 + "WHERE id_usuario = ?";
 
+        conn = this.conexionTransaccional != null ? this.conexionTransaccional : getConnection();
         if (actualizar == null) {
-            actualizar = getConnection().prepareStatement(query);
+            actualizar = conn.prepareStatement(query);
         }
 
         actualizar.setString(1, usuario.getNombre_usuario());

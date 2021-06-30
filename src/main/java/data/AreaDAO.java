@@ -2,6 +2,7 @@ package data;
 
 import static data.Conexion.*;
 import domain.*;
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -12,13 +13,15 @@ public class AreaDAO implements IDAO<Area> {//clase que retorna o bien un vector
     //del objeto area.
 
     //para las consultas SQL............
-    private PreparedStatement insertar;
-    private PreparedStatement eliminar;
-    private PreparedStatement actualizar;
-    private PreparedStatement buscar;
-    private PreparedStatement listar;
-
+    private PreparedStatement insertar = null;
+    private PreparedStatement eliminar = null;
+    private PreparedStatement actualizar = null;
+    private PreparedStatement buscar = null;
+    private PreparedStatement listar = null;
+    private Connection conn = null;
+    private Connection conexionTransaccional;
     private static AreaDAO instacia;
+    
 
     private AreaDAO() {
     }//constructor
@@ -33,8 +36,9 @@ public class AreaDAO implements IDAO<Area> {//clase que retorna o bien un vector
     public void insertar(Area entidad) throws SQLException {
 
         String query = "UPDATE Area SET  nombre_area = ?, descripcion_area = ?, estado = ?  WHERE codigo_area = ? ;";
+        conn = this.conexionTransaccional != null ? this.conexionTransaccional : getConnection();
         if (insertar == null) {
-            insertar = getConnection().prepareStatement(query);
+            insertar = conn.prepareStatement(query);
         }
 
         insertar.setString(1, entidad.getNombre_area());
@@ -47,9 +51,9 @@ public class AreaDAO implements IDAO<Area> {//clase que retorna o bien un vector
 
     public void eliminar(String id) throws SQLException {
         String query = "UPDATE Area SET estado = 0 WHERE codigo_area = ? ;";
-
+        conn = this.conexionTransaccional != null ? this.conexionTransaccional : getConnection();
         if (eliminar == null) {
-            eliminar = getConnection().prepareStatement(query);
+            eliminar = conn.prepareStatement(query);
         }
 
         eliminar.setString(1, id);
@@ -68,9 +72,9 @@ public class AreaDAO implements IDAO<Area> {//clase que retorna o bien un vector
 
     public List<Area> listar() throws SQLException {
         String query = "SELECT * FROM Area ";
-
+        conn = this.conexionTransaccional != null ? this.conexionTransaccional : getConnection();
         if (listar == null) {
-            listar = getConnection().prepareStatement(query);
+            listar = conn.prepareStatement(query);
         }
         ResultSet set = listar.executeQuery();
         ArrayList<Area> result = new ArrayList<>();
@@ -85,9 +89,9 @@ public class AreaDAO implements IDAO<Area> {//clase que retorna o bien un vector
         String query = "SELECT * \n"
                 + "FROM Area\n"
                 + "WHERE codigo_del_area = ? ;";
-
+        conn = this.conexionTransaccional != null ? this.conexionTransaccional : getConnection();
         if (buscar == null) {
-            buscar = getConnection().prepareStatement(query);
+            buscar = conn.prepareStatement(query);
         }
 
         buscar.setString(1, id);
@@ -98,9 +102,9 @@ public class AreaDAO implements IDAO<Area> {//clase que retorna o bien un vector
 
     public void actualizar(Area entidad) throws SQLException {
         String query = "UPDATE Area SET  nombre = ?, descripcion_area = ? WHERE codigo_del_area = ?;";
-
+        conn = this.conexionTransaccional != null ? this.conexionTransaccional : getConnection();
         if (actualizar == null) {
-            actualizar = getConnection().prepareStatement(query);
+            actualizar = conn.prepareStatement(query);
         }
 
         actualizar.setString(1, entidad.getNombre_area());

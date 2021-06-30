@@ -2,6 +2,7 @@ package data;
 
 import static data.Conexion.*;
 import domain.*;
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -9,11 +10,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Enfermera_HabilidadDAO implements IDAO<Enfermera_Habilidad> {
-    private PreparedStatement insertar;
-    private PreparedStatement eliminar;
-    private PreparedStatement actualizar;
-    private PreparedStatement buscar;
-    private PreparedStatement listar;
+     //para las consultas SQL............
+    private PreparedStatement insertar = null;
+    private PreparedStatement eliminar = null;
+    private PreparedStatement actualizar = null;
+    private PreparedStatement buscar = null;
+    private PreparedStatement listar = null;
+    private Connection conn = null;
+    private Connection conexionTransaccional;
     
     private static Enfermera_HabilidadDAO instacia;
     public static Enfermera_HabilidadDAO getInstance() {
@@ -30,10 +34,10 @@ public class Enfermera_HabilidadDAO implements IDAO<Enfermera_Habilidad> {
         String query = "INSERT INTO Enfermera_Habilidad(identificacion_enfermera_habilidad, habilidad) VALUES "
                 + "(?,?);";
 
+        conn = this.conexionTransaccional != null ? this.conexionTransaccional : getConnection();
         if (insertar == null) {
-            insertar = getConnection().prepareStatement(query);
+            insertar = conn.prepareStatement(query);
         }
-
         insertar.setString(1, entidad.getIdentificacion_enfermera_habilidad());
         insertar.setString(2, entidad.getHabilidad());
         insertar.executeUpdate();
@@ -45,8 +49,9 @@ public class Enfermera_HabilidadDAO implements IDAO<Enfermera_Habilidad> {
     public void eliminar(String id) throws SQLException {
         String query = "DELETE FROM Enfermera_Habilidad WHERE identificacion_enfermera_habilidad = '" + id + "';";
 //--------------------------------------------ESPECIFICAR QUE HABILIDAD SE VA A BORRAR, NO SE SI SE PUEDE AGREGAR UN CAMPO NECESARIO A ELIMINAR
+        conn = this.conexionTransaccional != null ? this.conexionTransaccional : getConnection();
         if (eliminar == null) {
-            eliminar = getConnection().prepareStatement(query);
+            eliminar = conn.prepareStatement(query);
         }
 
         eliminar.setString(1, id);
@@ -68,8 +73,9 @@ public class Enfermera_HabilidadDAO implements IDAO<Enfermera_Habilidad> {
         String query = "SELECT *\n"
                 + "FROM Enfermera_Habilidad INNER JOIN Empleados ON Empleados.identificacion:empleados = Enfermera_Habilidad.identificacion_enfermera_habilidad \n";
 
+        conn = this.conexionTransaccional != null ? this.conexionTransaccional : getConnection();
         if (listar == null) {
-            listar = getConnection().prepareStatement(query);
+            listar = conn.prepareStatement(query);
         }
         ResultSet set = listar.executeQuery();
         ArrayList<Enfermera_Habilidad> result = new ArrayList<>();
@@ -87,8 +93,9 @@ public class Enfermera_HabilidadDAO implements IDAO<Enfermera_Habilidad> {
                         "WHERE Enfermera_Habilidad.identificacion_enfermera_habilidad = ?;";
                
         
+       conn = this.conexionTransaccional != null ? this.conexionTransaccional : getConnection();
         if (buscar == null) {
-            buscar = getConnection().prepareStatement(query);
+            buscar = conn.prepareStatement(query);
         }
         
         buscar.setString(1, id);
@@ -102,8 +109,9 @@ public class Enfermera_HabilidadDAO implements IDAO<Enfermera_Habilidad> {
            String query = "UPDATE Enfermera_Habilidad SET  habilidad = ?"
                    + "WHERE identificacion_enfermera_habilidad = ? ;";
         
+       conn = this.conexionTransaccional != null ? this.conexionTransaccional : getConnection();
         if (actualizar == null) {
-            actualizar = getConnection().prepareStatement(query);
+            actualizar = conn.prepareStatement(query);
         }
         
         actualizar.setString(1, entidad.getIdentificacion_enfermera_habilidad());

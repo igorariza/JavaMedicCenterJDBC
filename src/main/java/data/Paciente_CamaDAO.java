@@ -2,6 +2,7 @@ package data;
 
 import static data.Conexion.*;
 import domain.*;
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -9,11 +10,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Paciente_CamaDAO implements IDAO<Paciente_Cama> {
-    private PreparedStatement insertar;
-    private PreparedStatement eliminar;
-    private PreparedStatement actualizar;
-    private PreparedStatement buscar;
-    private PreparedStatement listar;
+     //para las consultas SQL............
+    private PreparedStatement insertar = null;
+    private PreparedStatement eliminar = null;
+    private PreparedStatement actualizar = null;
+    private PreparedStatement buscar = null;
+    private PreparedStatement listar = null;
+    private Connection conn = null;
+    private Connection conexionTransaccional;
     
     
     private static Paciente_CamaDAO instacia;
@@ -33,8 +37,9 @@ public class Paciente_CamaDAO implements IDAO<Paciente_Cama> {
                 + "(?,?,?,?);";
                 
 
+        conn = this.conexionTransaccional != null ? this.conexionTransaccional : getConnection();
         if (insertar == null) {
-            insertar = getConnection().prepareStatement(query);
+            insertar = conn.prepareStatement(query);
         }
         
         insertar.setString(1, entidad.getIdentificacion_paciente());
@@ -49,10 +54,11 @@ public class Paciente_CamaDAO implements IDAO<Paciente_Cama> {
     @Override
     public void eliminar(String id) throws SQLException {
         String query = "DELETE FROM Paciente_Cama WHERE identificacion_paciente= ? ;";
-//-------------------  Mismo error
+//-------------------  error llave compuesta
        
+        conn = this.conexionTransaccional != null ? this.conexionTransaccional : getConnection();
         if (eliminar == null) {
-            eliminar = getConnection().prepareStatement(query);
+            eliminar = conn.prepareStatement(query);
         }
 
         eliminar.setString(1, id);
@@ -75,8 +81,9 @@ public class Paciente_CamaDAO implements IDAO<Paciente_Cama> {
         String query = "SELECT *\n"
                 + "FROM Paciente_Cama\n";
 
+        conn = this.conexionTransaccional != null ? this.conexionTransaccional : getConnection();
         if (listar == null) {
-            listar = getConnection().prepareStatement(query);
+            listar = conn.prepareStatement(query);
         }
         ResultSet set = listar.executeQuery();
         ArrayList<Paciente_Cama> result = new ArrayList<>();
@@ -92,10 +99,11 @@ public class Paciente_CamaDAO implements IDAO<Paciente_Cama> {
         String query = "SELECT * \n" +
                         "FROM Paciente_Cama\n" +
                         "WHERE Paciente_Cama.identificacion_paciente = ? ;";
-//-------------------------mismo error
+//-------------------------error llave compuesta
         
+        conn = this.conexionTransaccional != null ? this.conexionTransaccional : getConnection();
         if (buscar == null) {
-            buscar = getConnection().prepareStatement(query);
+            buscar = conn.prepareStatement(query);
         }
         
         buscar.setString(1, id);
@@ -109,8 +117,9 @@ public class Paciente_CamaDAO implements IDAO<Paciente_Cama> {
            String query = "UPDATE Paciente_Cama SET  fecha_inicial = ?, fecha_final = ?"
                    + " WHERE identificacion_paciente = ? AND numero_de_cama = ?);";
         
+        conn = this.conexionTransaccional != null ? this.conexionTransaccional : getConnection();
         if (actualizar == null) {
-            actualizar = getConnection().prepareStatement(query);
+            actualizar = conn.prepareStatement(query);
         }
         
         

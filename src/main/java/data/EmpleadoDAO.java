@@ -2,6 +2,7 @@ package data;
 
 import static data.Conexion.*;
 import domain.*;
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -10,11 +11,14 @@ import java.util.List;
 
 public class EmpleadoDAO implements IDAO<Empleado> {
 
-    private PreparedStatement insertar;
-    private PreparedStatement eliminar;
-    private PreparedStatement actualizar;
-    private PreparedStatement buscar;
-    private PreparedStatement listar;
+     //para las consultas SQL............
+    private PreparedStatement insertar = null;
+    private PreparedStatement eliminar = null;
+    private PreparedStatement actualizar = null;
+    private PreparedStatement buscar = null;
+    private PreparedStatement listar = null;
+    private Connection conn = null;
+    private Connection conexionTransaccional;
 
     private static EmpleadoDAO instacia;
 
@@ -33,8 +37,9 @@ public class EmpleadoDAO implements IDAO<Empleado> {
         String query = "INSERT INTO Empleado (identificacion_empleado, nombre_empleado, cargo_empleado, salario, direccion_empleado, e_mail, telefono_empleado, area_empleado, identificacion_jefe, estado_empleado) VALUES "
                 + "(?,?,?,?,?,?,?,?,?,'1');";
 
+        conn = this.conexionTransaccional != null ? this.conexionTransaccional : getConnection();
         if (insertar == null) {
-            insertar = getConnection().prepareStatement(query);
+            insertar = conn.prepareStatement(query);
         }
 
         insertar.setString(1, entidad.getIdentificacion_empleado());
@@ -53,8 +58,9 @@ public class EmpleadoDAO implements IDAO<Empleado> {
     public void eliminar(String id) throws SQLException {
         String query = "UPDATE Empleado SET estado_empleado = 0 WHERE identificacion_empleado = ? ;";
 
+        conn = this.conexionTransaccional != null ? this.conexionTransaccional : getConnection();
         if (eliminar == null) {
-            eliminar = getConnection().prepareStatement(query);
+            eliminar = conn.prepareStatement(query);
         }
 
         eliminar.setString(1, id);
@@ -82,8 +88,9 @@ public class EmpleadoDAO implements IDAO<Empleado> {
         String query = "SELECT *\n"
                 + "FROM Empleado \n";
 
+        conn = this.conexionTransaccional != null ? this.conexionTransaccional : getConnection();
         if (listar == null) {
-            listar = getConnection().prepareStatement(query);
+            listar = conn.prepareStatement(query);
         }
         ResultSet set = listar.executeQuery();
         ArrayList<Empleado> result = new ArrayList<>();
@@ -99,8 +106,9 @@ public class EmpleadoDAO implements IDAO<Empleado> {
                 + "FROM Empleado\n"
                 + "WHERE identificacion_empleado = ? ;";
 
+        conn = this.conexionTransaccional != null ? this.conexionTransaccional : getConnection();
         if (buscar == null) {
-            buscar = getConnection().prepareStatement(query);
+            buscar = conn.prepareStatement(query);
         }
 
         buscar.setString(1, id);
@@ -115,8 +123,9 @@ public class EmpleadoDAO implements IDAO<Empleado> {
                 + "direccion_empleado = ?, e_mail = ?, telefono_empleado = ?, area_empleado = ?, identificacion_jefe = ?, estado_empleado = ?"
                 + " WHERE identificacion_empleado = ? ;";
 
+        conn = this.conexionTransaccional != null ? this.conexionTransaccional : getConnection();
         if (actualizar == null) {
-            actualizar = getConnection().prepareStatement(query);
+            actualizar = conn.prepareStatement(query);
         }
 
         actualizar.setString(1, entidad.getNombre_empleado());

@@ -2,6 +2,7 @@ package data;
 
 import static data.Conexion.*;
 import domain.*;
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -11,11 +12,13 @@ import java.util.List;
 public class Campana_prevencionDAO implements IDAO<Campana_prevencion> {
 
     //para las consultas SQL............
-    private PreparedStatement insertar;
-    private PreparedStatement eliminar;
-    private PreparedStatement actualizar;
-    private PreparedStatement buscar;
-    private PreparedStatement listar;
+    private PreparedStatement insertar = null;
+    private PreparedStatement eliminar = null;
+    private PreparedStatement actualizar = null;
+    private PreparedStatement buscar = null;
+    private PreparedStatement listar = null;
+    private Connection conn = null;
+    private Connection conexionTransaccional;
 
     private static Campana_prevencionDAO instacia;
 
@@ -34,8 +37,9 @@ public class Campana_prevencionDAO implements IDAO<Campana_prevencion> {
         String query = "INSERT INTO Campana_prevencion (codigo_de_campana, nombre_campana, objetivo_campana, "
                 + "fecha_realizacion, identificacion_medico_campana) VALUES(?,?,?,?,?);";
 
+        conn = this.conexionTransaccional != null ? this.conexionTransaccional : getConnection();
         if (insertar == null) {
-            insertar = getConnection().prepareStatement(query);
+            insertar = conn.prepareStatement(query);
         }
 
         insertar.setInt(1, entidad.getCodigo_campana());
@@ -50,8 +54,9 @@ public class Campana_prevencionDAO implements IDAO<Campana_prevencion> {
     public void eliminar(String id) throws SQLException {
         String query = "DELETE FROM Campana_prevencion WHERE codigo_de_campana = ?;";
 
+        conn = this.conexionTransaccional != null ? this.conexionTransaccional : getConnection();
         if (eliminar == null) {
-            eliminar = getConnection().prepareStatement(query);
+            eliminar = conn.prepareStatement(query);
         }
 
         eliminar.setString(1, id);
@@ -76,8 +81,9 @@ public class Campana_prevencionDAO implements IDAO<Campana_prevencion> {
                 + "FROM campana_prevencion INNER JOIN (medico INNER JOIN empleado ON medico.identificacion_medico = empleado.identificacion_empleado) AS c \n"
                 + "ON campana_prevencion.identificacion_medico_campana = c.identificacion_medico";
 
+        conn = this.conexionTransaccional != null ? this.conexionTransaccional : getConnection();
         if (listar == null) {
-            listar = getConnection().prepareStatement(query);
+            listar = conn.prepareStatement(query);
         }
         ResultSet set = listar.executeQuery();
         ArrayList<Campana_prevencion> result = new ArrayList<>();
@@ -94,8 +100,9 @@ public class Campana_prevencionDAO implements IDAO<Campana_prevencion> {
                 + "FROM Campana_prevencion\n"
                 + "WHERE codigo_de_campana = ?;";
 
+        conn = this.conexionTransaccional != null ? this.conexionTransaccional : getConnection();
         if (buscar == null) {
-            buscar = getConnection().prepareStatement(query);
+            buscar = conn.prepareStatement(query);
         }
 
         buscar.setString(1, id);
@@ -110,8 +117,9 @@ public class Campana_prevencionDAO implements IDAO<Campana_prevencion> {
                 + "fecha_realizacion = ?, identificacion_medico_campana = ?"
                 + " WHERE codigo_de_campana = ? ;";
 
+        conn = this.conexionTransaccional != null ? this.conexionTransaccional : getConnection();
         if (actualizar == null) {
-            actualizar = getConnection().prepareStatement(query);
+            actualizar = conn.prepareStatement(query);
         }
 
         actualizar.setString(1, entidad.getNombre_campana());
