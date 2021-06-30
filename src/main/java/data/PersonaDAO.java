@@ -6,11 +6,20 @@ import java.sql.*;
 import java.util.*;
 
 public class PersonaDAO {
+    
+    private Connection conexionTransaccional;
 
     private static final String SQL_SELECT = "SELECT * FROM Empleado";
     private static final String SQL_INSERT = "INSERT INTO Empleado (identificacion_empleado, nombre_empleado, cargo_empleado, salario, direccion_empleado, e_mail, telefono_empleado, area_empleado, identificacion_jefe, estado_empleado) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
     private static final String SQL_UPDATE = "UPDATE Empleado SET nombre_empleado = ?, cargo_empleado = ?, salario = ?, direccion_empleado = ?, e_mail = ?, telefono_empleado = ?, area_empleado = ?, identificacion_jefe = ?, estado_empleado = ? WHERE identificacion_empleado = ?";
     private static final String SQL_DELETE = "DELETE FROM Empleado WHERE identificacion_empleado = ?";
+    
+    public PersonaDAO(){
+    }
+    
+    public PersonaDAO(Connection conexionTransaccional){
+        this.conexionTransaccional = conexionTransaccional;        
+    }
     
     public List<Persona> seleccionar() {
         Connection conn = null;
@@ -20,7 +29,7 @@ public class PersonaDAO {
         List<Persona> personas = new ArrayList<>();
 
         try {
-            conn = getConnection();
+            conn = this.conexionTransaccional != null ? this.conexionTransaccional :  getConnection();
             smtm = conn.prepareStatement(SQL_SELECT);
             rs = smtm.executeQuery();
             while (rs.next()) {
@@ -43,7 +52,10 @@ public class PersonaDAO {
             try {
                 close(rs);
                 close(smtm);
-                close(conn);
+                if(this.conexionTransaccional == null){
+                    close(conn);
+                }
+                
             } catch (SQLException ex) {
                 ex.printStackTrace(System.out);
             }
@@ -56,7 +68,7 @@ public class PersonaDAO {
         PreparedStatement smtm = null;
         int registro = 0;
         try {
-            conn = getConnection();
+            conn = this.conexionTransaccional != null ? this.conexionTransaccional :  getConnection();
             smtm = conn.prepareStatement(SQL_INSERT);
             smtm.setString(1, persona.getIdEmpleado());
             smtm.setString(2, persona.getNombre());
@@ -74,7 +86,9 @@ public class PersonaDAO {
         } finally {
             try {
                 close(smtm);
-                close(conn);
+                if(this.conexionTransaccional == null){
+                    close(conn);
+                }
             } catch (SQLException ex) {
                 ex.printStackTrace(System.out);
             }
@@ -88,7 +102,7 @@ public class PersonaDAO {
         PreparedStatement smtm = null;
         int registro = 0;
         try {
-            conn = getConnection();
+            conn = this.conexionTransaccional != null ? this.conexionTransaccional :  getConnection();
             smtm = conn.prepareStatement(SQL_UPDATE);
             smtm.setString(1, persona.getNombre());
             smtm.setString(2, persona.getCargo());
@@ -106,7 +120,9 @@ public class PersonaDAO {
         } finally {
             try {
                 close(smtm);
-                close(conn);
+                if(this.conexionTransaccional == null){
+                    close(conn);
+                }
             } catch (SQLException ex) {
                 ex.printStackTrace(System.out);
             }
@@ -119,7 +135,7 @@ public class PersonaDAO {
         PreparedStatement smtm = null;
         int registro = 0;
         try {
-            conn = getConnection();
+            conn = this.conexionTransaccional != null ? this.conexionTransaccional :  getConnection();
             smtm = conn.prepareStatement(SQL_DELETE);
             smtm.setString(1, persona.getIdEmpleado());
             registro = smtm.executeUpdate();
@@ -128,7 +144,9 @@ public class PersonaDAO {
         } finally {
             try {
                 close(smtm);
-                close(conn);
+                if(this.conexionTransaccional == null){
+                    close(conn);
+                }
             } catch (SQLException ex) {
                 ex.printStackTrace(System.out);
             }

@@ -18,33 +18,33 @@ import javax.ws.rs.core.MediaType;
 
 @Path("usuarios")
 public class RecursoUsuario {
-    
+
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    public List<Usuario> get(){
+    public List<User> get() {
         try {
             return DaoUsuario.getInstance().listar();
-            
+
         } catch (SQLException ex) {
             Logger.getLogger(RecursoUsuario.class.getName()).log(Level.SEVERE, null, ex);
         }
         return null;
     }
-    
+
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
-    public void post(Usuario usuario){
+    public void post(User usuario) {
         try {
             DaoUsuario.getInstance().insertar(usuario);
         } catch (SQLException ex) {
             Logger.getLogger(RecursoUsuario.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
+
     @GET
     @Path("{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Usuario getUsuarioById(@PathParam("id")String id){
+    public User getUsuarioById(@PathParam("id") String id) {
         try {
             return DaoUsuario.getInstance().buscar(id);
         } catch (SQLException ex) {
@@ -52,20 +52,20 @@ public class RecursoUsuario {
         }
         return null;
     }
-    
+
     @DELETE
     @Path("{id}")
-    public void delete(@PathParam("id")String id){
+    public void delete(@PathParam("id") String id) {
         try {
             DaoUsuario.getInstance().eliminar(id);
         } catch (SQLException ex) {
             Logger.getLogger(RecursoUsuario.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
+
     @PUT
     @Path("{id}")
-    public void put(@PathParam("id")String id, User usuario){
+    public void put(@PathParam("id") String id, User usuario) {
         usuario.setCodigo_usuario(id);
         try {
             DaoUsuario.getInstance().actualizar(usuario);
