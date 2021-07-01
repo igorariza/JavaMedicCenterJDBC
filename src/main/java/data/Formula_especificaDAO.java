@@ -2,6 +2,7 @@ package data;
 
 import static data.Conexion.*;
 import domain.*;
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -10,9 +11,9 @@ import java.util.List;
 
 public class Formula_especificaDAO implements IDAOBUSCAR1<Formula_especifica> {
 
-    
-    private PreparedStatement buscar;
-   
+    private PreparedStatement buscar = null;
+    private Connection conn = null;
+    private Connection conexionTransaccional;
 
     // --Formula_especifica(id_formula_especifica, id_formula_medica,codigo_medicamento,cantidad)
     private static Formula_especificaDAO instacia;
@@ -23,8 +24,6 @@ public class Formula_especificaDAO implements IDAOBUSCAR1<Formula_especifica> {
         }
         return instacia;
     }
-
-    
 
     public Formula_especifica cargar(ResultSet set) throws SQLException {
 
@@ -39,17 +38,15 @@ public class Formula_especificaDAO implements IDAOBUSCAR1<Formula_especifica> {
         return Formula_especifica;
     }
 
-   
-
-    
     public List<Formula_especifica> buscar(String id) throws SQLException {
         String query = "SELECT codigo_medicamento, nombre_medicamento, descripcion_medicamento ,cantidad ,(costo * cantidad) AS precioTotal\n"
                 + "FROM (((formula_especifica NATURAL JOIN medicamento) AS lista INNER JOIN formula_medica ON lista.id_formula_medica =  formula_medica.id_formula) AS p \n"
                 + "INNER JOIN paciente ON p.identificacion_paciente_formula = paciente.numero_ss ) AS medi\n"
                 + "WHERE  medi.numero_ss = ?";
 
+        conn = this.conexionTransaccional != null ? this.conexionTransaccional : getConnection();
         if (buscar == null) {
-            buscar = getConnection().prepareStatement(query);
+            buscar = conn.prepareStatement(query);
         }
 
         buscar.setString(1, id);
@@ -60,6 +57,6 @@ public class Formula_especificaDAO implements IDAOBUSCAR1<Formula_especifica> {
         }
 
         return result;
-       
+
     }
 }

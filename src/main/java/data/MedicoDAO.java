@@ -2,6 +2,7 @@ package data;
 
 import static data.Conexion.*;
 import domain.*;
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -10,12 +11,14 @@ import java.util.List;
 
 public class MedicoDAO implements IDAO<Medico> {
 
-    //para las consultas SQL............
-    private PreparedStatement insertar;
-    private PreparedStatement eliminar;
-    private PreparedStatement actualizar;
-    private PreparedStatement buscar;
-    private PreparedStatement listar;
+     //para las consultas SQL............
+    private PreparedStatement insertar = null;
+    private PreparedStatement eliminar = null;
+    private PreparedStatement actualizar = null;
+    private PreparedStatement buscar = null;
+    private PreparedStatement listar = null;
+    private Connection conn = null;
+    private Connection conexionTransaccional;
 
     private static MedicoDAO instacia;
 
@@ -34,8 +37,9 @@ public class MedicoDAO implements IDAO<Medico> {
 
         String query = "INSERT INTO Medico (identificacion_medico, especialidad, numero_licencia, universidad) VALUES(?,?,?,?);";
 
+        conn = this.conexionTransaccional != null ? this.conexionTransaccional : getConnection();
         if (insertar == null) {
-            insertar = getConnection().prepareStatement(query);
+            insertar = conn.prepareStatement(query);
         }
 
         insertar.setString(1, entidad.getIdentificacion_medico());
@@ -50,8 +54,9 @@ public class MedicoDAO implements IDAO<Medico> {
     public void eliminar(String id) throws SQLException {
         String query = "DELETE FROM Medico WHERE identificacion_medico = ?;";
 
+        conn = this.conexionTransaccional != null ? this.conexionTransaccional : getConnection();
         if (eliminar == null) {
-            eliminar = getConnection().prepareStatement(query);
+            eliminar = conn.prepareStatement(query);
         }
 
         eliminar.setString(1, id);
@@ -78,8 +83,9 @@ public class MedicoDAO implements IDAO<Medico> {
                 + "empleado.identificacion_empleado = medico.identificacion_medico) "
                 + "WHERE Empleado.estado_empleado='1' ";
 
+        conn = this.conexionTransaccional != null ? this.conexionTransaccional : getConnection();
         if (listar == null) {
-            listar = getConnection().prepareStatement(query);
+            listar = conn.prepareStatement(query);
         }
         ResultSet set = listar.executeQuery();
         ArrayList<Medico> result = new ArrayList<>();
@@ -97,8 +103,9 @@ public class MedicoDAO implements IDAO<Medico> {
                 + "FROM Medico\n"
                 + "WHERE identificacion_medico = ?;";
 
+        conn = this.conexionTransaccional != null ? this.conexionTransaccional : getConnection();
         if (buscar == null) {
-            buscar = getConnection().prepareStatement(query);
+            buscar = conn.prepareStatement(query);
         }
 
         buscar.setString(1, id);
@@ -112,8 +119,9 @@ public class MedicoDAO implements IDAO<Medico> {
     public void actualizar(Medico entidad) throws SQLException {
         String query = "UPDATE Medico SET  especialidad = ?, numero_licencia = ?, universidad = ? WHERE identificacion_medico = ? ;";
 
+        conn = this.conexionTransaccional != null ? this.conexionTransaccional : getConnection();
         if (actualizar == null) {
-            actualizar = getConnection().prepareStatement(query);
+            actualizar = conn.prepareStatement(query);
         }
 
         actualizar.setString(1, entidad.getEspecialidad());

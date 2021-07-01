@@ -2,6 +2,7 @@ package data;
 
 import static data.Conexion.*;
 import domain.*;
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -10,11 +11,15 @@ import java.util.List;
 
 public class Historia_Clinica_EspecificaDAO implements IDAO<Historia_Clinica_Especifica> {
 
-    private PreparedStatement insertar;
-    private PreparedStatement eliminar;
-    private PreparedStatement actualizar;
-    private PreparedStatement buscar;
-    private PreparedStatement listar;
+     //para las consultas SQL............
+    private PreparedStatement insertar = null;
+    private PreparedStatement eliminar = null;
+    private PreparedStatement actualizar = null;
+    private PreparedStatement buscar = null;
+    private PreparedStatement listar = null;
+    private Connection conn = null;
+    private Connection conexionTransaccional;
+
 
     private static Historia_Clinica_EspecificaDAO instacia;
 
@@ -31,8 +36,9 @@ public class Historia_Clinica_EspecificaDAO implements IDAO<Historia_Clinica_Esp
                 + "identificacion_medico_hce, precio, causas_hce, descuento) VALUES "
                 + "(?,?,?,?,?,?);";
 
+        conn = this.conexionTransaccional != null ? this.conexionTransaccional : getConnection();
         if (insertar == null) {
-            insertar = getConnection().prepareStatement(query);
+            insertar = conn.prepareStatement(query);
         }
 
         insertar.setInt(1, entidad.getHistoria_serial_hce());
@@ -48,8 +54,9 @@ public class Historia_Clinica_EspecificaDAO implements IDAO<Historia_Clinica_Esp
     public void eliminar(String id) throws SQLException {
         String query = "DELETE FROM Historia_Clinica_Especifica WHERE historia_serial_hce= ?;";
 //--------------------------------------------Hay error ya que es llave compuesta, corregir
+        conn = this.conexionTransaccional != null ? this.conexionTransaccional : getConnection();
         if (eliminar == null) {
-            eliminar = getConnection().prepareStatement(query);
+            eliminar = conn.prepareStatement(query);
         }
 
         eliminar.setString(1, id);
@@ -72,8 +79,9 @@ public class Historia_Clinica_EspecificaDAO implements IDAO<Historia_Clinica_Esp
         String query = "SELECT *\n"
                 + "FROM Historia_Clinica_Especifica\n";
 
+       conn = this.conexionTransaccional != null ? this.conexionTransaccional : getConnection();
         if (listar == null) {
-            listar = getConnection().prepareStatement(query);
+            listar = conn.prepareStatement(query);
         }
         ResultSet set = listar.executeQuery();
         ArrayList<Historia_Clinica_Especifica> result = new ArrayList<>();
@@ -88,10 +96,11 @@ public class Historia_Clinica_EspecificaDAO implements IDAO<Historia_Clinica_Esp
         String query = "SELECT * \n"
                 + "FROM Historia_Clinica_Especifica\n"
                 + "WHERE Historia_Clinica_Especifica.historia_serial_hce= ? ;";
-        //-------------------Mismo error que arriba
+        //-------------------Error llave compuesta
 
+        conn = this.conexionTransaccional != null ? this.conexionTransaccional : getConnection();
         if (buscar == null) {
-            buscar = getConnection().prepareStatement(query);
+            buscar = conn.prepareStatement(query);
         }
 
         buscar.setString(1, id);
@@ -105,8 +114,9 @@ public class Historia_Clinica_EspecificaDAO implements IDAO<Historia_Clinica_Esp
         String query = "UPDATE Historia_Clinica_Especifica SET  identificacion_medico_hce = ?, precio = ?, "
                 + "causas_hce = ?, descuento = ? WHERE historia_serial_hce = ?, AND fecha_consulta = ?);";
 
+        conn = this.conexionTransaccional != null ? this.conexionTransaccional : getConnection();
         if (actualizar == null) {
-            actualizar = getConnection().prepareStatement(query);
+            actualizar = conn.prepareStatement(query);
         }
 
         actualizar.setString(1, entidad.getIdentificacion_medico_hce());

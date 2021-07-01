@@ -2,6 +2,7 @@ package data;
 
 import static data.Conexion.*;
 import domain.*;
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -10,11 +11,14 @@ import java.util.List;
 
 public class Formula_medicaDAO implements IDAO<Formula_medica> {
 
-    private PreparedStatement insertar;
-    private PreparedStatement eliminar;
-    private PreparedStatement actualizar;
-    private PreparedStatement buscar;
-    private PreparedStatement listar;
+    //para las consultas SQL............
+    private PreparedStatement insertar = null;
+    private PreparedStatement eliminar = null;
+    private PreparedStatement actualizar = null;
+    private PreparedStatement buscar = null;
+    private PreparedStatement listar = null;
+    private Connection conn = null;
+    private Connection conexionTransaccional;
 
     private static Formula_medicaDAO instacia;
 
@@ -31,8 +35,9 @@ public class Formula_medicaDAO implements IDAO<Formula_medica> {
         String query = "INSERT INTO Formula_medica(id_formula, identificacion_medico_formula, identificacion_paciente_formula, fecha) VALUES "
                 + "(?,?,?,?);";
 
+        conn = this.conexionTransaccional != null ? this.conexionTransaccional : getConnection();
         if (insertar == null) {
-            insertar = getConnection().prepareStatement(query);
+            insertar = conn.prepareStatement(query);
         }
 
         insertar.setInt(1, entidad.getCodigo_formula());
@@ -46,8 +51,9 @@ public class Formula_medicaDAO implements IDAO<Formula_medica> {
 
     public void eliminar(String id) throws SQLException {
         String query = "DELETE FROM Formula_medica WHERE id_formula = ? ;";
+        conn = this.conexionTransaccional != null ? this.conexionTransaccional : getConnection();
         if (eliminar == null) {
-            eliminar = getConnection().prepareStatement(query);
+            eliminar = conn.prepareStatement(query);
         }
 
         eliminar.setString(1, id);
@@ -75,8 +81,9 @@ public class Formula_medicaDAO implements IDAO<Formula_medica> {
                 + "        ON t1.identificacion_medico = t2.identificacion_medico_formula \n"
                 + "     ) AS tabla";
 
+        conn = this.conexionTransaccional != null ? this.conexionTransaccional : getConnection();
         if (listar == null) {
-            listar = getConnection().prepareStatement(query);
+            listar = conn.prepareStatement(query);
         }
         ResultSet set = listar.executeQuery();
         ArrayList<Formula_medica> result = new ArrayList<>();
@@ -92,8 +99,9 @@ public class Formula_medicaDAO implements IDAO<Formula_medica> {
                 + "FROM Formula_medica\n"
                 + "WHERE Formula_medica.id_formula= ?;";
 
+        conn = this.conexionTransaccional != null ? this.conexionTransaccional : getConnection();
         if (buscar == null) {
-            buscar = getConnection().prepareStatement(query);
+            buscar = conn.prepareStatement(query);
         }
 
         buscar.setString(1, id);
@@ -107,8 +115,9 @@ public class Formula_medicaDAO implements IDAO<Formula_medica> {
         String query = "UPDATE Formula_medica SET  identificacion_medico_formula = ?,"
                 + " identificacion_paciente_formula = ?, fecha =? WHERE id_formula= ?;";
 
+        conn = this.conexionTransaccional != null ? this.conexionTransaccional : getConnection();
         if (actualizar == null) {
-            actualizar = getConnection().prepareStatement(query);
+            actualizar = conn.prepareStatement(query);
         }
 
         actualizar.setString(1, entidad.getId_medico_formula());

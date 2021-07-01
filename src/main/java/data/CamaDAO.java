@@ -2,6 +2,7 @@ package data;
 
 import static data.Conexion.*;
 import domain.*;
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -11,11 +12,13 @@ import java.util.List;
 public class CamaDAO implements IDAO<Cama> {
 
     //para las consultas SQL............
-    private PreparedStatement insertar;
-    private PreparedStatement eliminar;
-    private PreparedStatement actualizar;
-    private PreparedStatement buscar;
-    private PreparedStatement listar;
+    private PreparedStatement insertar = null;
+    private PreparedStatement eliminar = null;
+    private PreparedStatement actualizar = null;
+    private PreparedStatement buscar = null;
+    private PreparedStatement listar = null;
+    private Connection conn = null;
+    private Connection conexionTransaccional;
 
     private static CamaDAO instacia;
 
@@ -33,8 +36,9 @@ public class CamaDAO implements IDAO<Cama> {
 
         String query = "INSERT INTO Cama (numero_de_cama, descripcion_cama, area_cama, estado_cama) VALUES(?,?,?,?);";
 
+        conn = this.conexionTransaccional != null ? this.conexionTransaccional : getConnection();
         if (insertar == null) {
-            insertar = getConnection().prepareStatement(query);
+            insertar = conn.prepareStatement(query);
         }
 
         insertar.setString(1, entidad.getNumero_de_cama());
@@ -48,8 +52,9 @@ public class CamaDAO implements IDAO<Cama> {
     public void eliminar(String id) throws SQLException {
         String query = "DELETE  FROM Cama WHERE numero_de_cama = ?;";
 
+        conn = this.conexionTransaccional != null ? this.conexionTransaccional : getConnection();
         if (eliminar == null) {
-            eliminar = getConnection().prepareStatement(query);
+            eliminar = conn.prepareStatement(query);
         }
 
         eliminar.setString(1, id);
@@ -70,8 +75,9 @@ public class CamaDAO implements IDAO<Cama> {
         String query = "SELECT *\n"
                 + "FROM Cama \n";
 
+        conn = this.conexionTransaccional != null ? this.conexionTransaccional : getConnection();
         if (listar == null) {
-            listar = getConnection().prepareStatement(query);
+            listar = conn.prepareStatement(query);
         }
         ResultSet set = listar.executeQuery();
         ArrayList<Cama> result = new ArrayList<>();
@@ -88,8 +94,9 @@ public class CamaDAO implements IDAO<Cama> {
                 + "FROM Cama\n"
                 + "WHERE numero_de_cama = ?;";
 
+        conn = this.conexionTransaccional != null ? this.conexionTransaccional : getConnection();
         if (buscar == null) {
-            buscar = getConnection().prepareStatement(query);
+            buscar = conn.prepareStatement(query);
         }
 
         buscar.setString(1, id);
@@ -102,8 +109,9 @@ public class CamaDAO implements IDAO<Cama> {
     public void actualizar(Cama entidad) throws SQLException {
         String query = "UPDATE Cama SET  descripcion_cama = ?, area_cama = ?, estado_cama = ? WHERE numero_de_cama = ? ;";
 
+        conn = this.conexionTransaccional != null ? this.conexionTransaccional : getConnection();
         if (actualizar == null) {
-            actualizar = getConnection().prepareStatement(query);
+            actualizar = conn.prepareStatement(query);
         }
 
         actualizar.setString(1, entidad.getDescripcion_cama());

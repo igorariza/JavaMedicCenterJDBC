@@ -2,6 +2,7 @@ package data;
 
 import static data.Conexion.*;
 import domain.*;
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -10,7 +11,10 @@ import java.util.List;
 
 public class Informes_administrador_unoDAO {
 
-    private PreparedStatement listar;
+    //para las consultas SQL............
+    private PreparedStatement listar = null;
+    private Connection conn = null;
+    private Connection conexionTransaccional;
     private static Informes_administrador_unoDAO instacia;
 
     private Informes_administrador_unoDAO() {
@@ -39,8 +43,9 @@ public class Informes_administrador_unoDAO {
                 + "FROM (SELECT * FROM cita_medica WHERE Cita_medica.fecha_cita BETWEEN '?' AND '?' AND estado_cita = 'Atendida') AS R1\n"
                 + "GROUP BY R1.identificacion_medico_cita) AS R2 ON Empleado.identificacion_empleado = R2.identificacion_medico_cita";
 
+        conn = this.conexionTransaccional != null ? this.conexionTransaccional : getConnection();
         if (listar == null) {
-            listar = getConnection().prepareStatement(query);
+            listar = conn.prepareStatement(query);
         }
         listar.setString(1, entidad.getFecha_inicial());
         listar.setString(2, entidad.getFecha_final());

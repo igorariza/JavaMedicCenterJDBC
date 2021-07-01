@@ -2,6 +2,7 @@ package data;
 
 import static data.Conexion.*;
 import domain.*;
+import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -10,11 +11,14 @@ import java.util.List;
 
 public class EnfermeraDAO implements IDAO<Enfermera> {
 
-    private PreparedStatement insertar;
-    private PreparedStatement eliminar;
-    private PreparedStatement actualizar;
-    private PreparedStatement buscar;
-    private PreparedStatement listar;
+    //para las consultas SQL............
+    private PreparedStatement insertar = null;
+    private PreparedStatement eliminar = null;
+    private PreparedStatement actualizar = null;
+    private PreparedStatement buscar = null;
+    private PreparedStatement listar = null;
+    private Connection conn = null;
+    private Connection conexionTransaccional;
 
     private static EnfermeraDAO instacia;
 
@@ -30,8 +34,9 @@ public class EnfermeraDAO implements IDAO<Enfermera> {
         String query = "INSERT INTO Enfermera(identificacion_enfermera, anos_experiencia) VALUES "
                 + "(?,?);";
 
+        conn = this.conexionTransaccional != null ? this.conexionTransaccional : getConnection();
         if (insertar == null) {
-            insertar = getConnection().prepareStatement(query);
+            insertar = conn.prepareStatement(query);
         }
 
         insertar.setString(1, entidad.getIdentificacion_enfermera());
@@ -43,8 +48,9 @@ public class EnfermeraDAO implements IDAO<Enfermera> {
     public void eliminar(String id) throws SQLException {
         String query = "DELETE FROM Enfermera WHERE identificacion_enfermera = ? ;";
 
+        conn = this.conexionTransaccional != null ? this.conexionTransaccional : getConnection();
         if (eliminar == null) {
-            eliminar = getConnection().prepareStatement(query);
+            eliminar = conn.prepareStatement(query);
         }
 
         eliminar.setString(1, id);
@@ -69,8 +75,9 @@ public class EnfermeraDAO implements IDAO<Enfermera> {
                 + "                  FROM (empleado INNER JOIN enfermera ON empleado.identificacion_empleado = enfermera.identificacion_enfermera) AS c1 INNER JOIN area ON c1.area_empleado = area.codigo_area\n"
                 + "                  WHERE  c1.estado_empleado = '1'";
 
+        conn = this.conexionTransaccional != null ? this.conexionTransaccional : getConnection();
         if (listar == null) {
-            listar = getConnection().prepareStatement(query);
+            listar = conn.prepareStatement(query);
         }
         ResultSet set = listar.executeQuery();
         ArrayList<Enfermera> result = new ArrayList<>();
@@ -86,8 +93,9 @@ public class EnfermeraDAO implements IDAO<Enfermera> {
                 + "FROM Enfermera INNER JOIN Empleados ON Empleados.identificacion_enfermera = Enfermera.identificacion_empleado\n"
                 + "WHERE Enfermera.identificacion = ? ;";
 
+        conn = this.conexionTransaccional != null ? this.conexionTransaccional : getConnection();
         if (buscar == null) {
-            buscar = getConnection().prepareStatement(query);
+            buscar = conn.prepareStatement(query);
         }
 
         buscar.setString(1, id);
@@ -100,8 +108,9 @@ public class EnfermeraDAO implements IDAO<Enfermera> {
 
         String query = "UPDATE Enfermera SET  anos_experiencia = ? WHERE identificacion_enfermera = ? ;";
 
+        conn = this.conexionTransaccional != null ? this.conexionTransaccional : getConnection();
         if (actualizar == null) {
-            actualizar = getConnection().prepareStatement(query);
+            actualizar = conn.prepareStatement(query);
         }
 
         actualizar.setString(2, entidad.getIdentificacion_enfermera());
