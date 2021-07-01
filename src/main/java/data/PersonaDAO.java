@@ -21,7 +21,7 @@ public class PersonaDAO {
         this.conexionTransaccional = conexionTransaccional;        
     }
     
-    public List<Persona> seleccionar() {
+    public List<Persona> seleccionar() throws SQLException {
         Connection conn = null;
         PreparedStatement smtm = null;
         ResultSet rs = null;
@@ -46,8 +46,6 @@ public class PersonaDAO {
                 persona = new Persona(idPersona, nombre, cargo, salario, direccion, e_mail, telefono, area, idJefe, estado);
                 personas.add(persona);
             }
-        } catch (SQLException ex) {
-            ex.printStackTrace(System.out);
         } finally {
             try {
                 close(rs);
@@ -63,7 +61,7 @@ public class PersonaDAO {
         return personas;
     }
 
-    public int insert(Persona persona) {
+    public int insert(Persona persona) throws SQLException {
         Connection conn = null;
         PreparedStatement smtm = null;
         int registro = 0;
@@ -81,8 +79,6 @@ public class PersonaDAO {
             smtm.setString(9, persona.getIdJefe());
             smtm.setString(10, persona.getEstado());
             registro = smtm.executeUpdate();
-        } catch (SQLException ex) {
-            ex.printStackTrace(System.out);
         } finally {
             try {
                 close(smtm);
@@ -97,7 +93,7 @@ public class PersonaDAO {
 
     }
     
-    public int update(Persona persona) {
+    public int update(Persona persona) throws SQLException {
         Connection conn = null;
         PreparedStatement smtm = null;
         int registro = 0;
@@ -115,8 +111,6 @@ public class PersonaDAO {
             smtm.setString(9, persona.getEstado());
             smtm.setString(10, persona.getIdEmpleado());
             registro = smtm.executeUpdate();
-        } catch (SQLException ex) {
-            ex.printStackTrace(System.out);
         } finally {
             try {
                 close(smtm);
@@ -130,7 +124,7 @@ public class PersonaDAO {
         return registro;
 
     }
-    public int delete(Persona persona) {
+    public int delete(Persona persona) throws SQLException {
         Connection conn = null;
         PreparedStatement smtm = null;
         int registro = 0;
@@ -139,8 +133,6 @@ public class PersonaDAO {
             smtm = conn.prepareStatement(SQL_DELETE);
             smtm.setString(1, persona.getIdEmpleado());
             registro = smtm.executeUpdate();
-        } catch (SQLException ex) {
-            ex.printStackTrace(System.out);
         } finally {
             try {
                 close(smtm);

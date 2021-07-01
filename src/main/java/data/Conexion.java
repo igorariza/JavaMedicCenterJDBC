@@ -8,7 +8,7 @@ public class Conexion {
     private static final String JDBC_USER = "root";
     private static final String JDBC_PASSWORD = "admin";
 
-    static Connection getConnection() throws SQLException {
+    public static Connection getConnection() throws SQLException {
         return DriverManager.getConnection(JDBC_URL, JDBC_USER, JDBC_PASSWORD);
     }
 
