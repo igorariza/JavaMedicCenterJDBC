@@ -15,7 +15,12 @@ public class TestTransactional {
             if (conexion.getAutoCommit()) {
                 conexion.setAutoCommit(false);
             }
-            PersonaDAO pesonaDao = new PersonaDAO(conexion);
+            IDAOBUSCAR1 agendaJdbc = new AgendaDaoJDBC(conexion);
+            List<AgendaDTO> agendas = agendaJdbc.listar();
+
+            for (AgendaDTO agenda : agendas) {
+                System.out.println("Persona DTO: " + agenda.getIdentificacion_paciente_cita());
+            }
 //            List<> personas = pesonaDao.seleccionar();
 
 //            Persona updateEmpleado = new Persona();
@@ -45,7 +50,6 @@ public class TestTransactional {
 //            createEmpleado.setTelefono("3008029001");
 //
 //            pesonaDao.insert(createEmpleado);
-            
             conexion.commit();
 
         } catch (SQLException ex) {

@@ -17,9 +17,9 @@ public class RecursoAgenda {
     @GET
     @Path("{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public List<Agenda> getUsuarioById(@PathParam("id")String id){
+    public List<AgendaDTO> getUsuarioById(@PathParam("id")String id){
         try {
-            return AgendaDAO.getInstance().buscar(id);
+            return AgendaDaoJDBC.getInstance().buscar(id);
         } catch (SQLException ex) {
             Logger.getLogger(RecursoAgenda.class.getName()).log(Level.SEVERE, null, ex);
         }

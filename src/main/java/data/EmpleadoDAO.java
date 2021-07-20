@@ -19,7 +19,6 @@ public class EmpleadoDAO implements IDAO<Empleado> {
     private PreparedStatement listar = null;
     private Connection conn = null;
     private Connection conexionTransaccional;
-
     private static EmpleadoDAO instacia;
 
     private EmpleadoDAO() {
