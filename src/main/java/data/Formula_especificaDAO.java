@@ -59,4 +59,9 @@ public class Formula_especificaDAO implements IDAOBUSCAR1<Formula_especifica> {
         return result;
 
     }
+
+    @Override
+    public List<Formula_especifica> listar() throws SQLException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
 }
